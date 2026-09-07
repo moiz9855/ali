@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday ALISBA</title>
+
+  <!-- Link preview control — keeps the letter private until opened -->
+  <meta property="og:title" content="Happy Birthday ALISBA 🕯️" />
+  <meta property="og:description" content="Something I made for your birthday. Tap to open." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Happy Birthday ALISBA 🕯️" />
+  <meta name="twitter:description" content="Something I made for your birthday. Tap to open." />
+  <meta name="description" content="Something I made for your birthday. Tap to open." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@300;400;500&family=Caveat:wght@500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --ink: #15091f;
+      --plum: #2b1440;
+      --plum-soft: #3a1d54;
+      --paper: #f4e9d6;
+      --paper-edge: #e6d3ab;
+      --gold: #c9a24d;
+      --gold-light: #e9cd8a;
+      --rose: #d98a9c;
+      --text-dark: #2c2013;
+      --text-muted: rgba(244, 233, 214, 0.6);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background: var(--ink);
+      overflow-x: hidden;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    /* ══════════════ COUNTDOWN ══════════════ */
+    #countdown-screen {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 20%, var(--plum-soft) 0%, var(--ink) 65%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      overflow: hidden;
+    }
+
+    #stars-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .cd-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .cd-eyebrow {
+      font-size: clamp(0.7rem, 1.6vw, 0.85rem);
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: riseIn 0.9s ease both;
+    }
+
+    .cd-name {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: clamp(3.5rem, 13vw, 8rem);
+      letter-spacing: 4px;
+      line-height: 1;
+      color: var(--gold-light);
+      opacity: 0;
+      animation: riseIn 0.9s ease both 0.15s;
+    }
+
+    .cd-sub {
+      font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+      letter-spacing: 3px;
+      color: var(--text-muted);
+      margin: 1.4rem 0 3rem;
+      opacity: 0;
+      animation: riseIn 0.9s ease both 0.3s;
+    }
+
+    .cd-timer {
+      display: flex;
+      gap: clamp(1rem, 3vw, 2.2rem);
+      align-items: baseline;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2.6rem;
+      opacity: 0;
+      animation: riseIn 0.9s ease both 0.45s;
+    }
+
+    .cd-unit {
+      text-align: center;
+      min-width: 64px;
+    }
+
+    .cd-num {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: clamp(2.2rem, 7vw, 3.6rem);
+      color: var(--paper);
+      display: block;
+      line-height: 1;
+    }
+
+    .cd-unit-label {
+      font-size: 0.62rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-top: 6px;
+    }
+
+    .cd-divider {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.3rem, 4vw, 2rem);
+      color: var(--gold);
+      align-self: center;
+      transform: translateY(-6px);
+    }
+
+    .cd-footer {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(1.1rem, 2.6vw, 1.5rem);
+      color: var(--gold-light);
+      opacity: 0;
+      animation: riseIn 0.9s ease both 0.6s;
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ══════════════ BIRTHDAY SCREEN ══════════════ */
+    #birthday-screen {
+      display: none;
+    }
+
+    /* ── Candle hero ── */
+    .candle-hero {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 50% 30%, var(--plum-soft) 0%, var(--ink) 70%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 3rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-eyebrow {
+      font-size: clamp(0.7rem, 1.8vw, 0.85rem);
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 1rem;
+    }
+
+    .hero-hb {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 500;
+      font-size: clamp(1.5rem, 4.5vw, 2.4rem);
+      color: var(--paper);
+    }
+
+    .hero-name {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: clamp(4rem, 16vw, 9.5rem);
+      letter-spacing: 4px;
+      line-height: 1;
+      background: linear-gradient(120deg, var(--gold-light), var(--gold) 55%, var(--rose));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0.2rem 0 2.5rem;
+    }
+
+    /* Candle */
+    .candle-wrap {
+      position: relative;
+      width: 140px;
+      height: 210px;
+      margin-bottom: 1.6rem;
+    }
+
+    .candle-body {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 140px;
+      border-radius: 6px 6px 4px 4px;
+      background: linear-gradient(90deg, #f0d9b0 0%, var(--paper) 45%, #d9c295 100%);
+      box-shadow: inset -6px 0 12px rgba(0, 0, 0, 0.15), 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .candle-drip {
+      position: absolute;
+      top: -4px;
+      width: 14px;
+      height: 22px;
+      background: var(--paper);
+      border-radius: 0 0 8px 8px;
+    }
+
+    .drip-1 {
+      left: 4px;
+    }
+
+    .drip-2 {
+      right: 10px;
+      height: 16px;
+    }
+
+    .wick {
+      position: absolute;
+      bottom: 138px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3px;
+      height: 16px;
+      background: #3a2d1e;
+      border-radius: 2px;
+    }
+
+    .flame-btn {
+      position: absolute;
+      bottom: 148px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 90px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .flame-glow {
+      position: absolute;
+      bottom: 4px;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(233, 205, 138, 0.55) 0%, rgba(233, 205, 138, 0) 70%);
+      filter: blur(4px);
+      animation: glowPulse 2.4s ease-in-out infinite;
+    }
+
+    .flame {
+      position: relative;
+      width: 22px;
+      height: 34px;
+      border-radius: 50% 50% 50% 4%;
+      background: radial-gradient(circle at 50% 75%, #fff2c4 0%, var(--gold-light) 35%, #e0813f 70%, rgba(224, 129, 63, 0) 100%);
+      transform-origin: bottom center;
+      animation: flicker 2.6s ease-in-out infinite;
+      transition: transform 0.6s ease, opacity 0.6s ease;
+    }
+
+    .flame::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 3px;
+      transform: translateX(-50%);
+      width: 8px;
+      height: 14px;
+      border-radius: 50%;
+      background: #7a3a12;
+      opacity: 0.5;
+    }
+
+    @keyframes flicker {
+
+      0%,
+      100% {
+        transform: scaleY(1) rotate(-1.5deg);
+      }
+
+      25% {
+        transform: scaleY(1.06) rotate(2deg);
+      }
+
+      50% {
+        transform: scaleY(0.96) rotate(-2.5deg);
+      }
+
+      75% {
+        transform: scaleY(1.04) rotate(1deg);
+      }
+    }
+
+    @keyframes glowPulse {
+
+      0%,
+      100% {
+        opacity: 0.7;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.12);
+      }
+    }
+
+    .candle-wrap.out .flame {
+      transform: scaleY(0) rotate(0deg);
+      opacity: 0;
+      animation: none;
+    }
+
+    .candle-wrap.out .flame-glow {
+      opacity: 0;
+      animation: none;
+      transition: opacity 0.6s ease;
+    }
+
+    .smoke {
+      position: absolute;
+      bottom: 150px;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      background: rgba(230, 225, 220, 0.55);
+      border-radius: 50%;
+      filter: blur(2px);
+      pointer-events: none;
+      animation: smokeRise 1.6s ease-out forwards;
+    }
+
+    @keyframes smokeRise {
+      0% {
+        transform: translate(-50%, 0) scale(1);
+        opacity: 0.6;
+      }
+
+      100% {
+        transform: translate(calc(-50% + var(--drift, 20px)), -90px) scale(3);
+        opacity: 0;
+      }
+    }
+
+    .wish-hint {
+      font-size: clamp(0.8rem, 2vw, 0.95rem);
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      animation: hintPulse 2.4s ease-in-out infinite;
+    }
+
+    .wish-hint.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @keyframes hintPulse {
+
+      0%,
+      100% {
+        opacity: 0.55;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.3rem;
+      color: rgba(244, 233, 214, 0.35);
+      animation: bob 2.2s ease infinite;
+      opacity: 0;
+      transition: opacity 0.8s ease 0.4s;
+    }
+
+    .scroll-cue.show {
+      opacity: 1;
+    }
+
+    @keyframes bob {
+
+      0%,
+      100% {
+        transform: translate(-50%, 0);
+      }
+
+      50% {
+        transform: translate(-50%, -10px);
+      }
+    }
+
+    /* ── Letter section ── */
+    .letter-section {
+      background: linear-gradient(180deg, var(--ink) 0%, var(--paper) 14%);
+      padding: 1rem 1.5rem 5rem;
+    }
+
+    .letter-eyebrow {
+      text-align: center;
+      font-size: 0.78rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #9c7d3f;
+      padding-top: 3rem;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .letter-title {
+      text-align: center;
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 500;
+      font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+      color: var(--text-dark);
+      margin: 0.4rem 0 2.8rem;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.8s ease 0.1s, transform 0.8s ease 0.1s;
+    }
+
+    .letter-section.revealed .letter-eyebrow,
+    .letter-section.revealed .letter-title,
+    .letter-section.revealed .letter-card,
+    .letter-section.revealed .closing {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .letter-card {
+      max-width: 700px;
+      margin: 0 auto;
+      background: #fbf5e8;
+      border: 1px solid var(--paper-edge);
+      border-radius: 4px;
+      padding: clamp(2rem, 5vw, 3.6rem);
+      box-shadow: 0 30px 60px -20px rgba(20, 8, 30, 0.35), 0 2px 0 var(--paper-edge);
+      position: relative;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.9s ease 0.2s, transform 0.9s ease 0.2s;
+    }
+
+    .letter-card::before {
+      content: '';
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #e0a2ab, var(--rose) 60%, #b5586b 100%);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    .letter-card::after {
+      content: '❦';
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 1.1rem;
+    }
+
+    .msg-text {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.95rem, 2vw, 1.05rem);
+      line-height: 1.95;
+      color: var(--text-dark);
+    }
+
+    .msg-text p {
+      margin-bottom: 1.1rem;
+    }
+
+    .msg-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .msg-text em {
+      font-style: italic;
+      color: #9c3f5c;
+    }
+
+    .msg-sig {
+      text-align: right;
+      margin-top: 2rem;
+      font-family: 'Caveat', cursive;
+      font-weight: 600;
+      font-size: 1.7rem;
+      color: #9c7d3f;
+    }
+
+    .closing {
+      text-align: center;
+      margin-top: 3.5rem;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.8s ease 0.35s, transform 0.8s ease 0.35s;
+    }
+
+    .closing-rule {
+      width: 60px;
+      height: 1px;
+      background: var(--paper-edge);
+      margin: 0 auto 1.4rem;
+    }
+
+    .closing-text {
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      color: #8a6f42;
+    }
+
+    @media (max-width: 480px) {
+      .letter-card {
+        padding: 2rem 1.4rem;
+      }
+
+      .cd-timer {
+        gap: 0.8rem;
+      }
+
+      .candle-wrap {
+        transform: scale(0.85);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════ COUNTDOWN ══════════════ -->
+  <div id="countdown-screen">
+    <canvas id="stars-canvas"></canvas>
+    <div class="cd-content">
+      <p class="cd-eyebrow">counting down to</p>
+      <h1 class="cd-name">ALISBA</h1>
+      <p class="cd-sub">— tenth of september —</p>
+
+      <div class="cd-timer">
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-days">00</span>
+          <span class="cd-unit-label">Days</span>
+        </div>
+        <span class="cd-divider">·</span>
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-hours">00</span>
+          <span class="cd-unit-label">Hours</span>
+        </div>
+        <span class="cd-divider">·</span>
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-mins">00</span>
+          <span class="cd-unit-label">Minutes</span>
+        </div>
+        <span class="cd-divider">·</span>
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-secs">00</span>
+          <span class="cd-unit-label">Seconds</span>
+        </div>
+      </div>
+
+      <p class="cd-footer">something's waiting for you</p>
+    </div>
+  </div>
+
+  <!-- ══════════════ BIRTHDAY ══════════════ -->
+  <div id="birthday-screen">
+
+    <section class="candle-hero">
+      <p class="hero-eyebrow">tenth of september</p>
+      <p class="hero-hb">Happy Birthday</p>
+      <h1 class="hero-name">ALISBA</h1>
+
+      <div class="candle-wrap" id="candleWrap">
+        <button class="flame-btn" id="flameBtn" aria-label="Blow out the candle to make a wish">
+          <span class="flame-glow"></span>
+          <span class="flame" id="flame"></span>
+        </button>
+        <div class="wick"></div>
+        <div class="candle-body">
+          <div class="candle-drip drip-1"></div>
+          <div class="candle-drip drip-2"></div>
+        </div>
+      </div>
+
+      <p class="wish-hint" id="wishHint">make a wish — tap the flame</p>
+      <div class="scroll-cue" id="scrollCue">↓</div>
+    </section>
+
+    <section class="letter-section" id="letterSection">
+      <p class="letter-eyebrow">a small note</p>
+      <h2 class="letter-title">for you</h2>
+
+      <div class="letter-card">
+        <div class="msg-text">
+          <p>Hey alisba i know you are probably reading this on your birthday so happy birthday to you and i hope
+            your day will go so so so so much better from anyone else all the best for your day</p>
+          <p>and ngl ty for being my friend and existing in my life I can't thank you enough that's all i want to
+            say</p>
+          <p>just enjoy your day and just enjoy lol</p>
+        </div>
+        <p class="msg-sig">— it's your bad friend andy✌🏻</p>
+      </div>
+
+      <div class="closing">
+        <div class="closing-rule"></div>
+        <p class="closing-text">HAPPY BIRTHDAY ALISBA</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ─── Stars ───────────────────────────────────────────────
+    function initStars() {
+      const canvas = document.getElementById('stars-canvas');
+      const ctx = canvas.getContext('2d');
+      let stars = [];
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        stars = Array.from({ length: 160 }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.6 + 0.3,
+          speed: Math.random() * 0.02 + 0.005,
+          phase: Math.random() * Math.PI * 2
+        }));
+      }
+
+      function draw(t) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        stars.forEach(s => {
+          const alpha = 0.25 + 0.65 * Math.abs(Math.sin(t * s.speed + s.phase));
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(244,233,214,${alpha})`;
+          ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      requestAnimationFrame(draw);
+    }
+
+    // ─── Countdown target: September 10 ──────────────────────
+    function getBirthdayTarget() {
+      const now = new Date();
+      const target = new Date(now.getFullYear(), 8, 10, 0, 0, 0);
+      if (now >= target) target.setFullYear(target.getFullYear() + 1);
+      return target;
+    }
+
+    function isBirthdayToday() {
+      const now = new Date();
+      return now.getMonth() === 8 && now.getDate() === 10;
+    }
+
+    function startCountdown() {
+      const target = getBirthdayTarget();
+
+      function update() {
+        const now = new Date();
+        const diff = target - now;
+
+        if (diff <= 0 || isBirthdayToday()) {
+          revealBirthday();
+          return;
+        }
+
+        document.getElementById('cd-days').textContent = String(Math.floor(diff / 86400000)).padStart(2, '0');
+        document.getElementById('cd-hours').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+        document.getElementById('cd-mins').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+        document.getElementById('cd-secs').textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+      }
+
+      update();
+      setInterval(update, 1000);
+    }
+
+    function revealBirthday() {
+      const cs = document.getElementById('countdown-screen');
+      const bs = document.getElementById('birthday-screen');
+      cs.style.transition = 'opacity 1.2s ease';
+      cs.style.opacity = '0';
+      setTimeout(() => {
+        cs.style.display = 'none';
+        bs.style.display = 'block';
+      }, 1200);
+    }
+
+    // ─── Candle interaction ──────────────────────────────────
+    function initCandle() {
+      const wrap = document.getElementById('candleWrap');
+      const flameBtn = document.getElementById('flameBtn');
+      const hint = document.getElementById('wishHint');
+      const scrollCue = document.getElementById('scrollCue');
+      const letterSection = document.getElementById('letterSection');
+      let blown = false;
+
+      flameBtn.addEventListener('click', () => {
+        if (blown) return;
+        blown = true;
+
+        wrap.classList.add('out');
+        hint.classList.add('hidden');
+
+        for (let i = 0; i < 10; i++) {
+          const s = document.createElement('span');
+          s.className = 'smoke';
+          s.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+          s.style.animationDelay = (i * 0.06) + 's';
+          wrap.appendChild(s);
+          setTimeout(() => s.remove(), 2000);
+        }
+
+        setTimeout(() => {
+          scrollCue.classList.add('show');
+          letterSection.classList.add('revealed');
+          letterSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 900);
+      });
+    }
+
+    initStars();
+    startCountdown();
+    initCandle();
+  </script>
+</body>
+
+</html>
